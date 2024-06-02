@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react"
 import axios from "axios"
 import {Link} from 'react-router-dom'
+import LoadingIndicator from "../components/LoadingIndicator"
+import ErrorIndicator from "../components/ErrorIndicator"
 
 export default function Home(){
     const [data,setData] = useState([])
@@ -12,9 +14,9 @@ export default function Home(){
         try{
             const res = await axios({
                 method: 'get',
-                url : 'https://fakestoreapi.com/products'
+                url : 'https://dbioz2ek0e.execute-api.ap-south-1.amazonaws.com/mockapi/get-products'
             })
-            setData(res?.data)
+            setData(res?.data.data)
             setLoading(false)
             
         }
@@ -30,20 +32,23 @@ export default function Home(){
        console.log(data);
 
      if(loading){
-        return(<h1>Loading...</h1>)
+        return(<LoadingIndicator />)
      }
      if(error){
-        return(<h1>something went wrong</h1>)
+        return(< ErrorIndicator />)
      }
 
-    return(<><h1>Home page</h1>
+    return(
+    <><h1>Home page</h1>
        
            {data.map(product=>(
             <div key={product.id} style={{border:'2px solid'}}>
                <h2>Title : {product.title}</h2>
                 <h3>Category : {product.category}</h3> 
+                <h3>Price:{product.price}</h3>
                 <Link to='/Product-Details'>More Details...</Link>
             </div>
            ))} 
-    </>)
+    </>
+    )
 }
