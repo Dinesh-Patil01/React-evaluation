@@ -3,6 +3,7 @@ import axios from "axios"
 import {Link} from 'react-router-dom'
 import LoadingIndicator from "../components/LoadingIndicator"
 import ErrorIndicator from "../components/ErrorIndicator"
+import Cards from "../components/Cards"
 import {
    Button,
    Container,
@@ -18,9 +19,9 @@ export default function Home(){
     const [data,setData] = useState([])
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(false)
-    const [sortOrderValue, setSortOrderValue] = useState("");
-    const [filterValue, setFilterValue] = useState("");  
-    
+    const [sort, setSort] = useState('');
+    const [filter, setFilter] = useState('');
+  
      
      async function fetchDataUpdate(){
         setLoading(true)
@@ -44,12 +45,27 @@ export default function Home(){
      },[])
        console.log(data);
 
-     if(loading){
-        return(<LoadingIndicator />)
-     }
-     if(error){
-        return(< ErrorIndicator />)
-     }
+     const sortedAndFilteredProducts = () => {
+      let sorted = [...data];
+  
+      if (sort) {
+        sorted.sort((a, b) => (sort === 'Ascending' ? a.price - b.price : b.price - a.price));
+      }
+  
+      if (filter) {
+        sorted = sorted.filter(product => product.category === filter);
+      }
+  
+      return sorted;
+    };
+
+    if(loading){
+      return(<LoadingIndicator />)
+   }
+   if(error){
+      return(< ErrorIndicator />)
+   }
+
 
     return(
     <>
@@ -61,9 +77,9 @@ export default function Home(){
         <HStack spacing={4} my={4}>
             <Select
                placeholder="Sort by Price"
-               value={sortOrderValue}
+               value={sort}
                onChange={(e) => {
-                  setSortOrderValue(e.target.value);
+                  setSort(e.target.value);
                }}
             >
                <option value="asc">Low to High</option>
@@ -71,8 +87,8 @@ export default function Home(){
             </Select>
             <Select
                placeholder="Filter by Category"
-               value={filterValue}
-               onChange={(e) => setFilterValue(e.target.value)}
+               value={filter}
+               onChange={(e) => setFilter(e.target.value)}
             >
                <option value="men">Men</option>
                <option value="women">Women</option>
@@ -82,18 +98,24 @@ export default function Home(){
          </HStack>
         </Flex>
 
-        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
+        {/* <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
          {data.map(product=>(
                <div key={product.id} style={{border:'2px solid', height:"130px"}}>
                   <h2>Title : {product.title}</h2>
                   <h3>Category : {product.category}</h3> 
                   <h3>Price:{product.price}</h3>
-                  <Link to='/Product-Details'>
+                  <Link to='/ProductDetails'>
                      <Button variant="outline" colorScheme="red"> More Details...</Button>
                      </Link>
                </div>
             ))} 
-         </SimpleGrid>
+         </SimpleGrid> */}
+
+         <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
+            {sortedAndFilteredProducts()?.map((data) => (
+            <Cards {...data} key={data.id} />
+        ))}
+      </SimpleGrid>
       </Container>
            
     </>

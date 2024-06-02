@@ -1,23 +1,11 @@
-// import { Box, Heading } from "@chakra-ui/react";
-
-// export default function ProductDetails() {
-//   return (
-//     <Box>
-//       <Heading as="h1" size="xl">
-//         ProductDetails Page
-//       </Heading>
-//     </Box>
-//   );
-// }
-
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Spinner, Text, useToast, AlertDialog, AlertDialogBody, AlertDialogFooter, AlertDialogHeader, AlertDialogContent, AlertDialogOverlay } from '@chakra-ui/react';
+import { Heading,Box, Button, Spinner, Text, useToast, AlertDialog, AlertDialogBody, AlertDialogFooter, AlertDialogHeader, AlertDialogContent, AlertDialogOverlay } from '@chakra-ui/react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
 const ProductDetails = () => {
   const { id } = useParams();
-  const [product, setProduct] = useState(null);
+  const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -26,8 +14,8 @@ const ProductDetails = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await axios.get(`https://api.example.com/products/${id}`);
-        setProduct(response.data);
+        const response = await axios.get(`https://dbioz2ek0e.execute-api.ap-south-1.amazonaws.com/mockapi/get-products/${id}`);
+        setData(response.data.data);
         setLoading(false);
       } catch (err) {
         setError('Error fetching product details');
@@ -60,11 +48,15 @@ const ProductDetails = () => {
   if (error) return <Text color="red.500">{error}</Text>;
 
   return (
+    <>
+     <Box>
+      <Heading align="center"> Products-Detail Page </Heading>
+    </Box>
     <Box maxW="md" mx="auto" mt={10} borderWidth="1px" borderRadius="lg" overflow="hidden" p={4}>
-      <Text fontWeight="bold">{product.title}</Text>
-      <Text>{product.category}</Text>
-      <Text>${product.price}</Text>
-      <Text mt={4}>{product.description}</Text>
+      <Text fontWeight="bold">{data.title}</Text>
+      <Text>{data.category}</Text>
+      <Text>${data.price}</Text>
+      <Text mt={4}>{data.description}</Text>
       <Button colorScheme="teal" mt={4} onClick={handleAddToCart}>
         Add to Cart
       </Button>
@@ -89,6 +81,7 @@ const ProductDetails = () => {
         </AlertDialogOverlay>
       </AlertDialog>
     </Box>
+    </>
   );
 };
 

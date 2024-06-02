@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import Home from "../pages/Home";
 import Login from "../pages/Login";
 import PrivateRoute from "./PrivateRoute";
+import ProductDetails from "../pages/ProductDetails";
 
 export default function AllRoutes() {
   return (
@@ -15,6 +16,12 @@ export default function AllRoutes() {
           </PrivateRoute>
         }
       />
+      <Route path="/productDetails/:id" element={
+        <PrivateRoute>
+            <ProductDetails />
+        </PrivateRoute>
+      
+      } />
       
     </Routes>
   );
